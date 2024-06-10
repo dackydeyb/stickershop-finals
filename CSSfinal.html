@@ -7,7 +7,7 @@
   <title>KAWAII KINGDOM</title>
 
   <link rel="stylesheet" href="CSS/cssfinal.css" />
-  <link rel="icon" type="image/png" href="Sticker/March 7th_4.png">
+  <link rel="icon" type="image/png" href="./Sticker/March 7th_4.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap" rel="stylesheet">
@@ -18,11 +18,16 @@
 </head>
 
 <body>
+
+  <audio id="bg-music" loop autoplay>
+    <source src="./music/Future_Bossa.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
   <div id="left-animation" class="side-animation">
     <ul class="menu-list">
       <li><a href="#">HOME</a></li>
       <li><a href="about.html">ABOUT ME</a></li>
-      <li><a href="login.html">LOGIN</a></li>
+      <li><a href="login.php">LOGIN</a></li>
       <li><a href="#">CONTACT ME</a></li>
       <li><a href="shop.php">SHOP NOW</a></li>
     </ul>
@@ -55,7 +60,7 @@
                   <input type="text" placeholder="Find a sticker :>" id="search-bar">
                 </div>
               </form>
-              <a href="./login.html">
+              <a href="./login.php">
                 <img src="Elements/profile.png" alt="Profile" id="profile-icon">
               </a>
             </div>
@@ -645,6 +650,15 @@
 
     </div>
 
+    <div class="coming-soon">
+      <div class="video-box">
+      <video class="video" controls autoplay loop>
+        <source src="./video/0611.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      </div>
+    </div>
+
     <div class="news-stories">
       <h1>ADHESIVE ANNOUNCEMENTS</h1>
       <span class="decorative-span-1"></span>
@@ -716,13 +730,13 @@
         <li class="footer-column">
           <a href="#" id="link-back-to-top">BACK TO TOP</a>
           <a href="#" id="link-home">HOME</a>
-          <a href="login.html" id="link-login">LOGIN</a>
+          <a href="login.php" id="link-login">LOGIN</a>
         </li>
 
         <li class="footer-column">
           <a href="shop.php" id="link-shop-all-stickers">SHOP ALL STICKERS</a>
-          <a href="newarrivals.html" id="link-new-arrivals">NEW ARRIVALS</a>
-          <a href="bestseller.html" id="link-best-sellers">BEST SELLERS</a>
+          <a href="newarrivals.php" id="link-new-arrivals">NEW ARRIVALS</a>
+          <a href="bestseller.php" id="link-best-sellers">BEST SELLERS</a>
         </li>
 
         <li class="footer-column">

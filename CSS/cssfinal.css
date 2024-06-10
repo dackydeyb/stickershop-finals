@@ -448,7 +448,7 @@ footer {
 #right-animation {
     right: 0;
     background-color: #ececfa;
-    background-image: url(../Elements/menu-bg.png);
+    background-image: url(./Elements/menu-bg.png);
     background-repeat: none;
     background-size: cover;
 }
@@ -1192,6 +1192,24 @@ footer {
     align-items: center;
     justify-content: center;
     gap: 30px;
+}
+
+
+.coming-soon {
+    height: 100dvh;
+    padding: 5rem 250px;
+    background-color: #f8f8ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-box {
+    position: relative;
+    width: 50%;
+    padding-top: 28.125%;
+    /* 16:9 Aspect Ratio */
 }
 
 

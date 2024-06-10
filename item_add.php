@@ -1,8 +1,20 @@
+<?php
+// item_add.php
+session_start();
+
+// Redirect to login page if not logged in
+if (!isset($_SESSION['user'])) {
+    header('Location: login.php');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>Add Item</title>
+    <link rel="icon" type="image/png" href="./Sticker/March 7th_4.png">
     <style>
         .container {
             width: 50%;
@@ -180,6 +192,7 @@
 
 <body>
     <div class="container">
+        <a href="logout.php">Log Out</a>
         <form id="itemadd" action="item_process.php" method="post" enctype="multipart/form-data">
             <label for="image">Image:</label>
             <input type="file" name="image" id="image" required><br>

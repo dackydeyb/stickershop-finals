@@ -1,23 +1,37 @@
-
 <?php
 session_start();
-include_once 'connection.php';
 
-// Fetch items
-$sql = "SELECT * FROM items";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-function getCartCount($userId, $conn) {
-    $sql = "SELECT COUNT(*) FROM cart WHERE user_id = :user_id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':user_id', $userId);
-    $stmt->execute();
-    return $stmt->fetchColumn();
+// Check if the user is logged in
+if (isset($_SESSION['user_id'])) {
+  echo "User ID: " . $_SESSION['user_id'];
+} else {
+  echo "User not logged in.";
 }
 
-$cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $conn) : 0;
+include_once 'connection.php';
+
+// Initialize $items as an empty array
+$items = [];
+
+try {
+  // Fetch items from the database
+  $sql = "SELECT * FROM items"; // Adjust the query according to your database schema
+  $stmt = $conn->prepare($sql);
+  $stmt->execute();
+  $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+  echo "Error: " . $e->getMessage();
+}
+
+// Initialize cart count
+$cartCount = 0;
+
+if (isset($_SESSION['user_id'])) {
+  $user_id = $_SESSION['user_id'];
+  $cartQuery = $conn->prepare("SELECT COUNT(*) FROM cart WHERE user_id = ?");
+  $cartQuery->execute([$user_id]);
+  $cartCount = $cartQuery->fetchColumn();
+}
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +43,7 @@ $cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $c
   <title>Shop Now</title>
 
   <link rel="stylesheet" href="CSS/shop.css" />
-  <link rel="icon" type="image/png" href="Sticker/March 7th_4.png">
+  <link rel="icon" type="image/png" href="./Sticker/March 7th_4.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap" rel="stylesheet">
@@ -38,15 +52,18 @@ $cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $c
 </head>
 
 <body>
-
+<audio id="bg-music" loop autoplay>
+  <source src="./music/Koi_is_love.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
   <div id="left-animation" class="side-animation">
     <ul class="menu-list">
       <li><a href="CSSfinal.html">HOME</a></li>
       <li><a href="about.html">ABOUT ME</a></li>
-      <li><a href="login.html">LOGIN</a></li>
+      <li><a href="login.php">LOGIN</a></li>
       <li><a href="#">CONTACT ME</a></li>
-      <li><a href="shop.html">SHOP NOW</a></li>
-      <!-- <li><a href="checkout.php">YOUR CART [<?php echo $cartCount; ?>]</a></li> -->
+      <li><a href="shop.php">SHOP NOW</a></li>
+      <li><a href="cart.php">YOUR CART [<?php echo $cartCount; ?>]</a></li>
     </ul>
   </div>
   <div id="right-animation" class="side-animation"></div>
@@ -90,6 +107,7 @@ $cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $c
 
 
     <div class="shop-container">
+
       <div class="left-panel">
 
         <!-- Sort by Price -->
@@ -171,7 +189,6 @@ $cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $c
 
       <div class="right-panel">
         <div class="main-right-content">
-
           <?php foreach ($items as $item) : ?>
             <div class="card">
               <div class="card-img">
@@ -184,17 +201,23 @@ $cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $c
               <hr class="card-divider">
               <div class="card-footer">
                 <div class="card-price"><span>₱</span><?php echo htmlspecialchars($item['price']); ?></div>
-                <button class="card-btn">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
-                    <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-                    <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
-                    <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
-                  </svg>
-                </button>
+                <form method="POST" action="add_to_cart.php" class="add-to-cart-form">
+                  <input type="hidden" name="item_id" value="<?php echo htmlspecialchars($item['id']); ?>">
+                  <input type="hidden" name="item_name" value="<?php echo htmlspecialchars($item['name']); ?>">
+                  <input type="hidden" name="item_price" value="<?php echo htmlspecialchars($item['price']); ?>">
+                  <button type="submit" class="card-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                      <path d="m397.78 316h-205.13a15 15 0 0 1 -14.65-11.67l-34.54-150.48a15 15 0 0 1 14.62-18.36h274.27a15 15 0 0 1 14.65 18.36l-34.6 150.48a15 15 0 0 1 -14.62 11.67zm-193.19-30h181.25l27.67-120.48h-236.6z"></path>
+                      <path d="m222 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+                      <path d="m368.42 450a57.48 57.48 0 1 1 57.48-57.48 57.54 57.54 0 0 1 -57.48 57.48zm0-84.95a27.48 27.48 0 1 0 27.48 27.47 27.5 27.5 0 0 0 -27.48-27.47z"></path>
+                      <path d="m158.08 165.49a15 15 0 0 1 -14.23-10.26l-25.71-77.23h-47.44a15 15 0 1 1 0-30h58.3a15 15 0 0 1 14.23 10.26l29.13 87.49a15 15 0 0 1 -14.23 19.74z"></path>
+                    </svg>
+                  </button>
+                </form>
               </div>
             </div>
           <?php endforeach; ?>
+
         </div>
 
         <div class="pagination-container">
@@ -301,7 +324,33 @@ $cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $c
 
     </footer>
   </main>
+  <script>
+    $(document).ready(function() {
+      $('.add-to-cart').on('click', function() {
+        const itemId = $(this).data('id');
+        $.ajax({
+          url: 'add_to_cart.php',
+          type: 'POST',
+          data: {
+            id: itemId
+          },
+          success: function(response) {
+            if (response.status === 'success') {
+              alert('Item added to cart successfully!');
+              $('#cart-count').text(response.cartCount);
+            } else if (response.status === 'error' && response.message === 'not_logged_in') {
+              alert('You need to log in first.');
+              window.location.href = 'login.php';
+            } else {
+              alert('Something went wrong. Please try again.');
+            }
+          }
+        });
+      });
+    });
 
+
+  </script>
   <script src="JS/shop.js"></script>
 </body>
 

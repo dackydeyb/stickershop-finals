@@ -2,26 +2,43 @@
 session_start();
 include 'connection.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+$error_message = '';
 
-    // Fetch user
-    $sql = "SELECT * FROM users WHERE email = :email";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  $email = $_POST['email'];
+  $password = $_POST['password'];
+
+  // Check if the user is admin
+  $admin_email = 'admin@admin.com';
+  $admin_hashed_password = '$2y$10$g/RSXTUid5rtSqknqC2Lgu/ISU0f8Z9VSxB6nq3n6rNQZPst1VsqW';
+
+  if ($email == $admin_email && password_verify($password, $admin_hashed_password)) {
+    $_SESSION['user'] = $email;
+    $_SESSION['user_id'] = 2; // admin user_id is 2
+    header('Location: item_add.php');
+    exit;
+  } else {
+    // Check if the user is a normal user
+    $sql = "SELECT id, password FROM users WHERE email = :email";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':email', $email);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        header('Location: shop.php');
-        exit;
+      $_SESSION['user'] = $email;
+      $_SESSION['user_id'] = $user['id']; // Set user ID in session
+      header('Location: shop.php'); // Redirect to the user dashboard or main page
+      exit;
     } else {
-        echo "Invalid email or password.";
+      // Handle invalid login
+      $error_message = 'Invalid email or password.';
     }
+  }
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,16 +48,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <title>Log In</title>
 
   <link rel="stylesheet" href="CSS/login.css" />
-  <link rel="icon" type="image/png" href="Sticker/March 7th_4.png">
+  <link rel="icon" type="image/png" href="./Sticker/March 7th_4.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+
+  <script>
+    function showAlert(message) {
+      if (message) {
+        alert(message);
+      }
+    }
+   
+  </script>
+
 </head>
 
+<body onload="showAlert('<?php echo $error_message; ?>')">
 
-<body>
+<audio id="bg-music" loop autoplay>
+  <source src="./music/Koi_is_love.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
 
   <div id="left-animation" class="side-animation">
     <ul class="menu-list">
@@ -88,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </header>
 
     <section class="login-container">
-      <form class="form" action="login.php" method = "post">
+      <form class="form" action="login.php" method="post">
         <h1>- Welcome Back -</h1>
         <div class="flex-column">
           <label>Email </label>
