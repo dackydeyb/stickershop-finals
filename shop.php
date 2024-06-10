@@ -1,18 +1,24 @@
-<?php
-include 'connection.php';
 
-$page = 'shop';
-$sql = "SELECT * FROM items WHERE page = :page";
+<?php
+session_start();
+include_once 'connection.php';
+
+// Fetch items
+$sql = "SELECT * FROM items";
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':page', $page);
 $stmt->execute();
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-foreach ($items as $item) {
-    // Display the item
+function getCartCount($userId, $conn) {
+    $sql = "SELECT COUNT(*) FROM cart WHERE user_id = :user_id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    return $stmt->fetchColumn();
 }
-?>
 
+$cartCount = isset($_SESSION['user_id']) ? getCartCount($_SESSION['user_id'], $conn) : 0;
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,6 +46,7 @@ foreach ($items as $item) {
       <li><a href="login.html">LOGIN</a></li>
       <li><a href="#">CONTACT ME</a></li>
       <li><a href="shop.html">SHOP NOW</a></li>
+      <!-- <li><a href="checkout.php">YOUR CART [<?php echo $cartCount; ?>]</a></li> -->
     </ul>
   </div>
   <div id="right-animation" class="side-animation"></div>
@@ -67,7 +74,7 @@ foreach ($items as $item) {
                   <input type="text" placeholder="Search..." id="search-bar">
                 </div>
               </form>
-              <a href="./login.html">
+              <a href="./login.php">
                 <img src="Elements/profile.png" alt="Profile" id="profile-icon">
               </a>
 
