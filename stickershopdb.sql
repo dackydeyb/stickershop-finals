@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 10, 2024 at 03:17 PM
+-- Generation Time: Jun 15, 2024 at 09:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,6 +33,14 @@ CREATE TABLE `cart` (
   `item_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`id`, `user_id`, `item_id`) VALUES
+(31, 1, 22),
+(32, 1, 25);
+
 -- --------------------------------------------------------
 
 --
@@ -60,11 +68,10 @@ INSERT INTO `items` (`id`, `image`, `name`, `description`, `price`, `page`) VALU
 (12, 'Keqing 1.png', 'Keqing [1]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 129.49, 'newarrivals'),
 (13, 'Keqing 2.png', 'Keqing [2]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 121.43, 'newarrivals'),
 (14, 'Keqing 3.png', 'Keqing [3]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 458.43, 'newarrivals'),
-(15, 'Keqing 4.png', 'Keqing [4]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 232.34, 'newarrivals'),
+(15, 'Keqing 4.png', 'Keqing [4]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 230.34, 'newarrivals'),
 (16, 'Keqing 5.png', 'Keqing [5]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 349.34, 'newarrivals'),
 (17, 'Keqing 6.png', 'Keqing [6]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 234.23, 'newarrivals'),
 (18, 'Keqing 7.png', 'Keqing [7]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 243.23, 'newarrivals'),
-(19, 'Keqing 8.png', 'Keqing [8]', '[Genshin Impact x OnePlus] OnePlus Collaboration Emoji Now Available!', 564.34, 'newarrivals'),
 (20, 'Hu Tao 1.png', 'Hu Tao [1]', 'This is Hu Tao from Liyue', 343.00, 'newarrivals'),
 (21, 'Hu Tao 2.png', 'Hu Tao [2]', 'This is Hu Tao from Liyue', 234.33, 'newarrivals'),
 (22, 'Hu Tao 3.png', 'Hu Tao [3]', 'This is Hu Tao from Liyue', 245.32, 'newarrivals'),
@@ -102,7 +109,9 @@ INSERT INTO `items` (`id`, `image`, `name`, `description`, `price`, `page`) VALU
 (54, 'Raiden Shogun 1.png', 'Raiden Shogun [1]', 'Electro Archon of Inazuma', 653.00, 'bestseller'),
 (55, 'Raiden Shogun 2.png', 'Raiden Shogun [2]', 'Electro Archon of Inazuma', 14.00, 'bestseller'),
 (56, 'Yoimiya 1.png', 'Yoimiya [1]', 'Yoimiya is loved by everyone on Narukami Island.', 234.00, 'bestseller'),
-(57, 'Yoimiya 2.png', 'Yoimiya [2]', 'Yoimiya is loved by everyone on Narukami Island.', 149.00, 'bestseller');
+(57, 'Yoimiya 2.png', 'Yoimiya [2]', 'Yoimiya is loved by everyone on Narukami Island.', 149.00, 'bestseller'),
+(58, 'Hu Tao.png', 'Hu Tao [3]', 'Director of Wangsheng Funeral Parlor', 345.00, 'bestseller'),
+(59, 'Barbara 1.png', 'Barbara', 'Idol from Mondstadt', 80.49, 'bestseller');
 
 -- --------------------------------------------------------
 
@@ -121,7 +130,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`) VALUES
-(1, 'djgpaduada@slsu.edu.ph', '$2y$10$9MgrYcwEhmcTDPugbKDfiecHuNp30BItnuNlbCuSB6MST36aXn6tm');
+(1, 'djgpaduada@slsu.edu.ph', '$2y$10$9MgrYcwEhmcTDPugbKDfiecHuNp30BItnuNlbCuSB6MST36aXn6tm'),
+(2, 'admin@admin.com', '$2y$10$g/RSXTUid5rtSqknqC2Lgu/ISU0f8Z9VSxB6nq3n6rNQZPst1VsqW');
 
 --
 -- Indexes for dumped tables
@@ -156,17 +166,27 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
+--
+-- AUTO_INCREMENT for table `users`
+--
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `cart`
+--
 ALTER TABLE `cart`
   ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`);
